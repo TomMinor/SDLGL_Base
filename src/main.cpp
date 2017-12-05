@@ -1,4 +1,5 @@
 #include <SDL.h>
+#undef main
 #include <SDL_opengl.h>
 
 #include <stdio.h>
