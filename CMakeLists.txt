@@ -37,7 +37,7 @@ endif()
 add_definitions(${Qt5Widgets_DEFINITIONS})
 
 file(GLOB CPP_SOURCES 
-		${CMAKE_SOURCE_DIR}/src/main.cpp
+		${CMAKE_SOURCE_DIR}/src/*.cpp
  	)
 
 file(GLOB HEADERS 

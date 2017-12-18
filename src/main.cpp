@@ -1,6 +1,6 @@
+#include <gl_core_4_5.hpp>
 #include <SDL.h>
 #undef main
-#include <SDL_opengl.h>
 
 #include <stdio.h>
 #include <string>
@@ -14,11 +14,11 @@ void draw()
 
   if(colour++ % 2)
   {
-    glClearColor(1, 0, 0, 1);
+	  gl::ClearColor(1, 0, 0, 1);
   }
   else
   {
-    glClearColor(0, 1, 0, 0);
+	  gl::ClearColor(0, 1, 0, 0);
   }
 }
 
@@ -34,11 +34,9 @@ int main()
     return 1;
   }
 
-  /* Request opengl 3.2 context.
-  * SDL doesn't have the ability to choose which profile at this time of writing,
-  * but it should default to the core profile */
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+  // Why not be bleeding edge :)
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
 
   /* Turn on double buffering with a 24bit Z buffer.
   * You may need to change this to 16 or 32 for your system */
@@ -57,10 +55,23 @@ int main()
   }
 
   SDL_GLContext context = SDL_GL_CreateContext(window);
+  if (!context)
+  {
+	  printf("Unable to create context : %s\n", SDL_GetError());
+	  return 1;
+  }
+
+  gl::exts::LoadTest didLoad = gl::sys::LoadFunctions();
+  if (!didLoad)
+  {
+	  // @ToDo proper error handling
+	  printf("glLoadGen failed!");
+	  return 1;
+  }
 
   SDL_GL_SetSwapInterval(1);
 
-  glClearColor(0, 0, 0, 1);
+  gl::ClearColor(0, 0, 0, 1);
 
   bool bQuit = false;
 
@@ -93,7 +104,7 @@ int main()
 
     update();
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    gl::Clear(gl::COLOR_BUFFER_BIT);
 
     draw();
 
