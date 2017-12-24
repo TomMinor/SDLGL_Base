@@ -25,12 +25,19 @@ include_directories( ${SDL2_INCLUDE_DIRS} )
 # include_directories( ${Qt5Widgets_INCLUDE_DIRS} )
 # include_directories( ${Qt5Widgets_LIBRARIES} )
 
-set(GLM_DIR "${CMAKE_SOURCE_DIR}/glm/glm")
+set(GLM_DIR "${CMAKE_SOURCE_DIR}/deps/glm/glm")
+set(TINYGLTF_DIR "${CMAKE_SOURCE_DIR}/deps/tinygltf")
 
 if(EXISTS "${GLM_DIR}")
     include_directories( "${GLM_DIR}" )
 else()
     message( FATAL_ERROR "${GLM_DIR} doesn't exist, did you sync all submodules?" )
+endif()
+
+if(EXISTS "${TINYGLTF_DIR}")
+    include_directories( "${TINYGLTF_DIR}" )
+else()
+    message( FATAL_ERROR "${TINYGLTF_DIR} doesn't exist, did you sync all submodules?" )
 endif()
 
 # We need add -DQT_WIDGETS_LIB when using QtWidgets in Qt 5.

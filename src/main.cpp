@@ -2,11 +2,21 @@
 #include <SDL.h>
 #undef main
 
+#define TINYGLTF_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#include "tiny_gltf.h"
+
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+
 #include <stdio.h>
 #include <string>
 
 static const int c_windowWidth = 1024;
 static const int c_windowHeight = 768;
+
+tinygltf::Model model;
+
 
 void draw()
 {
@@ -25,6 +35,68 @@ void draw()
 void update()
 {
   SDL_Delay(250);
+}
+
+bool load_shaders()
+{
+	return true;
+}
+
+bool load_assets()
+{
+	tinygltf::TinyGLTF loader;
+	std::string err;
+	bool ret = loader.LoadASCIIFromFile(&model, &err, "../../assets/spheres/MetalRoughSpheres.gltf");
+	if (!err.empty()) {
+		printf("Err: %s\n", err.c_str());
+	}
+
+	if (!ret) {
+		printf("Failed to parse glTF\n");
+		return false;
+	}
+
+	return true;
+}
+
+bool setup_camera()
+{
+	glm::mat4 projection = glm::mat4(1.0f);
+	projection *= glm::perspective(45.0f, c_windowWidth / (float)c_windowHeight, 0.1f, 200.0f);
+
+	glm::mat4 modelview = glm::mat4(1.0f);
+	projection *= glm::lookAt(
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 0.0f, -1.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f)
+	);
+
+	glm::mat4 mvp = projection * modelview;
+
+	return true;
+}
+
+bool setup_scene()
+{
+	if (!load_shaders())
+	{
+		printf("Error loading shaders");
+		return false;
+	}
+
+	if (!load_assets())
+	{
+		printf("Error loading assets");
+		return false;
+	}
+
+	if (!setup_camera())
+	{
+		printf("Error setting up camera");
+		return false;
+	}
+
+	return true;
 }
 
 int main()
@@ -72,6 +144,11 @@ int main()
   SDL_GL_SetSwapInterval(1);
 
   gl::ClearColor(0, 0, 0, 1);
+
+  if (!setup_scene())
+  {
+	  return 1;
+  }
 
   bool bQuit = false;
 
